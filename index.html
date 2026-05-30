@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <title>Allowed YouTube Video Loader</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111827;
+      --panel2:#172033;
+      --text:#f8fafc;
+      --muted:#a8b3c7;
+      --line:rgba(255,255,255,.12);
+      --accent:#ff395c;
+      --accent2:#7c3aed;
+      --good:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --shadow:0 22px 80px rgba(0,0,0,.35);
+      --radius:24px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      min-height:100%;
+      overflow-x:hidden;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans Thai", "Noto Sans", Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(255,57,92,.22), transparent 28rem),
+        radial-gradient(circle at 85% 10%, rgba(124,58,237,.26), transparent 28rem),
+        linear-gradient(180deg,#070b16 0%, var(--bg) 45%, #070b16 100%);
+    }
+
+    button,input,select,textarea{font:inherit}
+    a{color:inherit}
+
+    .app{
+      width:min(1080px,100%);
+      margin:0 auto;
+      padding:24px 16px 42px;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns:1.12fr .88fr;
+      gap:18px;
+      align-items:stretch;
+      margin-top:12px;
+    }
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.04));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(14px);
+      overflow:hidden;
+    }
+
+    .main-card{padding:26px}
+    .side-card{padding:20px}
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      width:max-content;
+      max-width:100%;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.07);
+      color:#fff;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:13px;
+      line-height:1.2;
+    }
+
+    .logo-dot{
+      width:10px;height:10px;border-radius:50%;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      box-shadow:0 0 18px rgba(255,57,92,.8);
+      flex:0 0 auto;
+    }
+
+    h1{
+      font-size:clamp(30px,7vw,62px);
+      line-height:.98;
+      letter-spacing:-.055em;
+      margin:18px 0 14px;
+    }
+
+    .lead{
+      color:var(--muted);
+      font-size:clamp(15px,2.6vw,18px);
+      line-height:1.75;
+      margin:0 0 22px;
+    }
+
+    .notice{
+      border:1px solid rgba(245,158,11,.35);
+      background:rgba(245,158,11,.09);
+      color:#fdecc4;
+      border-radius:18px;
+      padding:12px 14px;
+      line-height:1.6;
+      font-size:14px;
+      margin:0 0 18px;
+    }
+
+    .form{
+      display:grid;
+      gap:14px;
+      margin-top:18px;
+    }
+
+    label{
+      display:block;
+      color:#dbe4f5;
+      font-weight:700;
+      font-size:13px;
+      margin:0 0 7px;
+    }
+
+    .field{
+      width:100%;
+      min-height:52px;
+      border:none;
+      outline:none;
+      border-radius:17px;
+      background:rgba(255,255,255,.08);
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.12);
+      padding:14px 15px;
+      transition:.18s ease;
+    }
+
+    .field:focus{
+      border-color:rgba(255,57,92,.7);
+      box-shadow:0 0 0 4px rgba(255,57,92,.12);
+      background:rgba(255,255,255,.1);
+    }
+
+    .field::placeholder{color:#75829a}
+
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .check{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      color:#d9e1ef;
+      font-size:14px;
+      line-height:1.55;
+      padding:12px;
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:17px;
+      background:rgba(255,255,255,.045);
+    }
+
+    .check input{
+      width:20px;height:20px;
+      margin-top:1px;
+      accent-color:var(--accent);
+      flex:0 0 auto;
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:2px;
+    }
+
+    .btn{
+      border:none;
+      border-radius:17px;
+      min-height:52px;
+      padding:0 18px;
+      cursor:pointer;
+      color:white;
+      font-weight:800;
+      letter-spacing:-.01em;
+      transition:transform .12s ease, opacity .12s ease, filter .12s ease;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:9px;
+      text-decoration:none;
+      user-select:none;
+    }
+
+    .btn:active{transform:scale(.98)}
+    .btn[disabled]{opacity:.45;cursor:not-allowed;filter:grayscale(.5)}
+    .primary{
+      background:linear-gradient(135deg,var(--accent),#ff6b35);
+      box-shadow:0 12px 30px rgba(255,57,92,.26);
+      flex:1 1 190px;
+    }
+    .ghost{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+      flex:0 1 auto;
+    }
+
+    .status{
+      margin-top:14px;
+      display:none;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.18);
+      padding:14px;
+      line-height:1.55;
+    }
+    .status.show{display:block}
+    .status.good{border-color:rgba(34,197,94,.38);background:rgba(34,197,94,.08)}
+    .status.bad{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.09)}
+    .status.warn{border-color:rgba(245,158,11,.38);background:rgba(245,158,11,.08)}
+
+    .progress{
+      width:100%;
+      height:10px;
+      border-radius:999px;
+      overflow:hidden;
+      background:rgba(255,255,255,.08);
+      margin-top:12px;
+      display:none;
+    }
+    .progress.show{display:block}
+    .bar{
+      height:100%;
+      width:12%;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      border-radius:999px;
+      animation:pulse 1.3s ease-in-out infinite alternate;
+    }
+    @keyframes pulse{to{width:88%}}
+
+    .mini-title{
+      font-size:18px;
+      font-weight:900;
+      margin:0 0 10px;
+      letter-spacing:-.02em;
+    }
+    .steps{
+      display:grid;
+      gap:10px;
+      margin:12px 0 0;
+    }
+    .step{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      color:#d8e0ef;
+      font-size:14px;
+      line-height:1.55;
+      padding:11px;
+      border:1px solid rgba(255,255,255,.1);
+      background:rgba(255,255,255,.045);
+      border-radius:16px;
+    }
+    .num{
+      width:25px;height:25px;
+      border-radius:9px;
+      display:grid;
+      place-items:center;
+      background:rgba(255,255,255,.1);
+      color:#fff;
+      font-weight:900;
+      flex:0 0 auto;
+    }
+
+    .settings{
+      margin-top:18px;
+      padding-top:16px;
+      border-top:1px solid rgba(255,255,255,.1);
+    }
+
+    .codebox{
+      margin-top:16px;
+      display:none;
+    }
+    .codebox.show{display:block}
+    pre{
+      white-space:pre-wrap;
+      word-break:break-word;
+      background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.12);
+      color:#e8f0ff;
+      border-radius:18px;
+      padding:14px;
+      overflow:auto;
+      max-height:260px;
+      font-size:13px;
+      line-height:1.55;
+    }
+
+    .footer{
+      color:#77839a;
+      font-size:13px;
+      line-height:1.55;
+      text-align:center;
+      margin-top:20px;
+    }
+
+    @media (max-width:780px){
+      .app{padding:14px 12px 30px}
+      .hero{grid-template-columns:1fr;gap:12px}
+      .main-card{padding:18px}
+      .side-card{padding:16px}
+      .row{grid-template-columns:1fr}
+      .btn{width:100%;min-height:50px}
+      .ghost{flex:1 1 100%}
+      h1{margin-top:14px}
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div class="card main-card">
+        <div class="badge"><span class="logo-dot"></span> YouTube loader สำหรับวิดีโอที่ได้รับอนุญาตเท่านั้น</div>
+        <h1>โหลดวิดีโอแบบปลอดภัยผ่าน Backend ของคุณ</h1>
+        <p class="lead">
+          หน้าเว็บนี้ใช้เป็นหน้า Frontend สำหรับรับลิงก์ YouTube แล้วส่งไปยัง API/Backend ที่คุณตั้งเอง เช่น Cloudflare Worker, Render, VPS หรือเครื่อง local ที่รัน yt-dlp
+        </p>
+
+        <div class="notice">
+          ใช้ได้เฉพาะวิดีโอที่คุณเป็นเจ้าของ, ได้รับอนุญาต, หรือมีสิทธิ์ดาวน์โหลดเท่านั้น หน้าเว็บนี้ไม่ฝัง token ลับ และไม่ bypass ระบบป้องกันของแพลตฟอร์ม
+        </div>
+
+        <form class="form" id="downloadForm">
+          <div>
+            <label for="url">ลิงก์ YouTube</label>
+            <input class="field" id="url" type="url" inputmode="url" autocomplete="off"
+              placeholder="https://www.youtube.com/watch?v=..." required />
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="quality">คุณภาพวิดีโอ</label>
+              <select class="field" id="quality">
+                <option value="720">720p MP4</option>
+                <option value="1080">1080p MP4</option>
+                <option value="best">ดีที่สุดที่รองรับ</option>
+                <option value="audio">เฉพาะเสียง MP3</option>
+              </select>
+            </div>
+            <div>
+              <label for="format">รูปแบบไฟล์</label>
+              <select class="field" id="format">
+                <option value="mp4">MP4</option>
+                <option value="webm">WEBM</option>
+                <option value="mp3">MP3 เฉพาะเสียง</option>
+              </select>
+            </div>
+          </div>
+
+          <label class="check">
+            <input id="agree" type="checkbox" required />
+            <span>ฉันยืนยันว่ามีสิทธิ์ดาวน์โหลดวิดีโอนี้ และจะไม่ใช้กับคอนเทนต์ที่ละเมิดลิขสิทธิ์หรือเงื่อนไขของแพลตฟอร์ม</span>
+          </label>
+
+          <div class="actions">
+            <button class="btn primary" id="submitBtn" type="submit">เริ่มส่งงานโหลด</button>
+            <button class="btn ghost" id="copyCmdBtn" type="button">คัดลอกคำสั่ง yt-dlp</button>
+          </div>
+        </form>
+
+        <div class="status" id="statusBox"></div>
+        <div class="progress" id="progress"><div class="bar"></div></div>
+
+        <div class="codebox" id="codeBox">
+          <pre id="cmdText"></pre>
+        </div>
+      </div>
+
+      <aside class="card side-card">
+        <h2 class="mini-title">วิธีต่อให้ใช้งานจริง</h2>
+        <div class="steps">
+          <div class="step"><span class="num">1</span><span>เอาไฟล์นี้ไปวางเป็น <b>index.html</b> ใน GitHub Pages ได้เลย</span></div>
+          <div class="step"><span class="num">2</span><span>สร้าง backend ที่มี endpoint <b>/download</b> เพื่อรับ URL แล้วรัน yt-dlp ฝั่ง server</span></div>
+          <div class="step"><span class="num">3</span><span>ตั้งค่า API Endpoint ด้านล่าง เช่น <b>https://your-api.com</b></span></div>
+          <div class="step"><span class="num">4</span><span>เมื่อ backend โหลดเสร็จ ให้ตอบกลับเป็นลิงก์ไฟล์สำหรับดาวน์โหลด</span></div>
+        </div>
+
+        <div class="settings">
+          <h2 class="mini-title">ตั้งค่า API</h2>
+          <label for="endpoint">Backend API Endpoint</label>
+          <input class="field" id="endpoint" placeholder="https://your-backend.example.com" />
+          <div class="actions" style="margin-top:10px">
+            <button class="btn ghost" id="saveEndpointBtn" type="button">บันทึก Endpoint</button>
+          </div>
+          <p class="footer" style="text-align:left;margin-bottom:0">
+            ถ้ายังไม่มี backend ปุ่มโหลดจะทำงานเป็นโหมดทดสอบ และจะแสดงคำสั่งที่ต้องนำไปรันบน server แทน
+          </p>
+        </div>
+      </aside>
+    </section>
+
+    <p class="footer">
+      Static frontend only · No secret token in browser · For permitted videos only
+    </p>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const form = $("downloadForm");
+    const urlInput = $("url");
+    const qualityInput = $("quality");
+    const formatInput = $("format");
+    const agreeInput = $("agree");
+    const endpointInput = $("endpoint");
+    const statusBox = $("statusBox");
+    const progress = $("progress");
+    const submitBtn = $("submitBtn");
+    const codeBox = $("codeBox");
+    const cmdText = $("cmdText");
+
+    endpointInput.value = localStorage.getItem("yt_loader_endpoint") || "";
+
+    function showStatus(message, type = "") {
+      statusBox.className = "status show" + (type ? " " + type : "");
+      statusBox.innerHTML = message;
+    }
+
+    function showProgress(isShow) {
+      progress.classList.toggle("show", Boolean(isShow));
+    }
+
+    function isAllowedYouTubeUrl(value) {
+      try {
+        const u = new URL(value);
+        const host = u.hostname.replace(/^www\./, "");
+        return [
+          "youtube.com",
+          "m.youtube.com",
+          "music.youtube.com",
+          "youtu.be"
+        ].includes(host);
+      } catch {
+        return false;
+      }
+    }
+
+    function buildYtDlpCommand(url, quality, format) {
+      const safeUrl = url.replaceAll('"', '\\"');
+      if (format === "mp3" || quality === "audio") {
+        return `yt-dlp -x --audio-format mp3 -o "downloads/%(title).100s.%(ext)s" "${safeUrl}"`;
+      }
+
+      if (quality === "best") {
+        return `yt-dlp -f "bv*+ba/best" --merge-output-format ${format} -o "downloads/%(title).100s.%(ext)s" "${safeUrl}"`;
+      }
+
+      return `yt-dlp -f "bv*[height<=${quality}]+ba/b[height<=${quality}]/best[height<=${quality}]" --merge-output-format ${format} -o "downloads/%(title).100s.%(ext)s" "${safeUrl}"`;
+    }
+
+    function updateCommandBox() {
+      const url = urlInput.value.trim() || "https://www.youtube.com/watch?v=VIDEO_ID";
+      const cmd = buildYtDlpCommand(url, qualityInput.value, formatInput.value);
+      cmdText.textContent = cmd;
+      codeBox.classList.add("show");
+      return cmd;
+    }
+
+    $("saveEndpointBtn").addEventListener("click", () => {
+      const endpoint = endpointInput.value.trim().replace(/\/+$/, "");
+      localStorage.setItem("yt_loader_endpoint", endpoint);
+      showStatus(endpoint
+        ? `บันทึก Endpoint แล้ว: <b>${endpoint}</b>`
+        : "ล้าง Endpoint แล้ว ตอนนี้จะเป็นโหมดทดสอบ", "good");
+    });
+
+    $("copyCmdBtn").addEventListener("click", async () => {
+      const cmd = updateCommandBox();
+      try {
+        await navigator.clipboard.writeText(cmd);
+        showStatus("คัดลอกคำสั่ง yt-dlp แล้ว เอาไปรันบน server/เครื่องที่คุณมีสิทธิ์ใช้งานได้เลย", "good");
+      } catch {
+        showStatus("คัดลอกอัตโนมัติไม่ได้ แต่ดูคำสั่งด้านล่างแล้วก๊อปเองได้", "warn");
+      }
+    });
+
+    [urlInput, qualityInput, formatInput].forEach(el => {
+      el.addEventListener("input", () => {
+        if (codeBox.classList.contains("show")) updateCommandBox();
+      });
+      el.addEventListener("change", () => {
+        if (codeBox.classList.contains("show")) updateCommandBox();
+      });
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const url = urlInput.value.trim();
+      const quality = qualityInput.value;
+      const format = formatInput.value;
+      const endpoint = endpointInput.value.trim().replace(/\/+$/, "");
+
+      if (!isAllowedYouTubeUrl(url)) {
+        showStatus("กรุณาใส่ลิงก์ YouTube ที่ถูกต้อง", "bad");
+        return;
+      }
+
+      if (!agreeInput.checked) {
+        showStatus("กรุณายืนยันว่าคุณมีสิทธิ์ดาวน์โหลดวิดีโอนี้ก่อน", "warn");
+        return;
+      }
+
+      updateCommandBox();
+
+      if (!endpoint) {
+        showStatus(
+          "ยังไม่ได้ตั้งค่า Backend API จึงยังโหลดจริงจากหน้าเว็บนี้ไม่ได้ ตอนนี้แสดงคำสั่ง yt-dlp สำหรับเอาไปรันบน backend แทน",
+          "warn"
+        );
+        return;
+      }
+
+      submitBtn.disabled = true;
+      showProgress(true);
+      showStatus("กำลังส่งงานไป backend...", "");
+
+      try {
+        const res = await fetch(endpoint + "/download", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ url, quality, format })
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          throw new Error(data.error || "Backend ตอบกลับไม่สำเร็จ");
+        }
+
+        if (data.downloadUrl) {
+          showStatus(
+            `โหลดเสร็จแล้ว: <a href="${data.downloadUrl}" target="_blank" rel="noopener"><b>กดดาวน์โหลดไฟล์</b></a>`,
+            "good"
+          );
+        } else if (data.jobId) {
+          showStatus(
+            `ส่งงานสำเร็จ Job ID: <b>${data.jobId}</b><br>Backend ของคุณรับงานแล้ว ถ้าต้องการ progress ให้ทำ endpoint /status เพิ่ม`,
+            "good"
+          );
+        } else {
+          showStatus("ส่งงานสำเร็จ แต่ backend ยังไม่ได้ส่งลิงก์ไฟล์กลับมา", "good");
+        }
+      } catch (err) {
+        showStatus("ส่งงานไม่สำเร็จ: " + (err.message || err), "bad");
+      } finally {
+        submitBtn.disabled = false;
+        showProgress(false);
+      }
+    });
+  </script>
+</body>
+</html>
